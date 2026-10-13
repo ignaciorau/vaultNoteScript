@@ -1,4 +1,4 @@
-# backup-notas
+# vaultNoteScript
 
 Script de Python que guarda tus notas de Obsidian en un repo **privado** de GitHub.
 
