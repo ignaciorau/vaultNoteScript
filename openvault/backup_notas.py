@@ -1,3 +1,4 @@
+import re
 import shutil
 import subprocess
 import sys
@@ -5,6 +6,8 @@ from datetime import datetime
 from pathlib import Path
 import tkinter as tk
 from tkinter import filedialog
+
+NAME_RE = re.compile(r"[A-Za-z0-9._-]+")
 
 
 def run(cmd, cwd=None):
@@ -29,7 +32,11 @@ def choose_path():
 
 
 def ask_name():
-    return input("Nombre del repo: ").strip().replace(" ", "-")
+    name = input("Nombre del repo: ").strip().replace(" ", "-")
+    if name and (name in (".", "..") or not NAME_RE.fullmatch(name)):
+        print("Nombre inválido: usá letras, números, '-', '_' o '.'.")
+        return ""
+    return name
 
 
 def confirm(question):
@@ -60,14 +67,19 @@ def guardar(vault, owner, name):
     if not (vault / ".git").exists():
         if not check(run(["git", "init", "-b", "main"], cwd=vault), "git init"):
             return False
+
     gitignore = vault / ".gitignore"
     if not gitignore.exists():
         gitignore.write_text(".obsidian/workspace*.json\n", encoding="utf-8")
 
     has_origin = run(["git", "remote", "get-url", "origin"], cwd=vault).returncode == 0
-    run(["git", "remote", "set-url" if has_origin else "add", "origin", url], cwd=vault)
+    action = "set-url" if has_origin else "add"
+    if not check(run(["git", "remote", action, "origin", url], cwd=vault), "git remote"):
+        return False
 
-    run(["git", "add", "-A"], cwd=vault)
+    if not check(run(["git", "add", "-A"], cwd=vault), "git add"):
+        return False
+
     if run(["git", "diff", "--cached", "--quiet"], cwd=vault).returncode != 0:
         msg = f"auto: {datetime.now():%Y-%m-%d %H:%M}"
         if not check(run(["git", "commit", "-m", msg], cwd=vault), "git commit"):
@@ -75,7 +87,7 @@ def guardar(vault, owner, name):
     else:
         print("Sin cambios nuevos.")
 
-    return check(run(["git", "push", "-u", "origin", "main"], cwd=vault), "git push")
+    return check(run(["git", "push", "-u", "origin", "HEAD"], cwd=vault), "git push")
 
 
 def main():
@@ -89,9 +101,14 @@ def main():
         print("No elegiste ninguna carpeta.")
         return
 
+    if not (vault / ".obsidian").is_dir():
+        if not confirm(f"'{vault}' no parece un vault de Obsidian (no tiene .obsidian). ¿Subirla igual?"):
+            print("Cancelado.")
+            return
+
     name = ask_name()
     if not name:
-        print("Falta el nombre del repo.")
+        print("Nombre del repo vacío o inválido.")
         return
 
     owner = get_owner()
