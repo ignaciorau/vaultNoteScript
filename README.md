@@ -41,7 +41,7 @@ flowchart TD
     B --> C{"¿Existe en GitHub?"}
     C -->|sí| E
     C -->|no| D{"¿Querés crearlo?"}
-    D -->|no| F(["Cancelado, no se toca nada"])
+    D -->|no| F(["Cancelado"])
     D -->|sí| D2["Se crea el repo privado"]
     D2 --> E["Se guardan los cambios con git: add y commit"]
     E --> G["Se suben a GitHub: push"]
