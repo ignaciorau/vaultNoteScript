@@ -1,85 +1,141 @@
-# vaultNoteScript
+<div align="center">
 
-Script de Python que guarda tus notas de Obsidian en un repo **privado** de GitHub.
+# 📓 vaultNoteScript
 
-Elegís la carpeta de tus notas, escribís el nombre del repo y el script hace el resto: si el repo no existe te pregunta si querés crearlo, y después sube todo con `git`.
+**Notas de Obsidian en repo privado de GitHub.**
 
-## Requisitos
+![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python&logoColor=white)
+![Git](https://img.shields.io/badge/Git-2.28%2B-F05032?logo=git&logoColor=white)
+![GitHub CLI](https://img.shields.io/badge/GitHub%20CLI-requerido-181717?logo=github&logoColor=white)
 
-- Windows con Python 3.8 o superior
-- [Git](https://git-scm.com/) (2.28 o superior)
-- [GitHub CLI](https://cli.github.com/)
+[Descarga](#-descarga) · [Diagrama](#-diagrama) · [Qué hace](#-qué-hace) · [Problemas frecuentes](#-problemas-frecuentes) · [Limitaciones](#-limitaciones)
 
-## Instalación
+</div>
 
+---
+
+## Resumen
+
+Elegís la carpeta de tus notas, elegís (o creás) un repo, y el script hace `init`, `add`, `commit` y `push` por vos.
+También puede **traer** tus notas desde un repo a otra máquina, preguntandote donde las queres guardar.
+
+```text
+=== Notas Unificadas ===
+1. Subir notas
+2. Traer notas
+3. Salir
 ```
+
+## Descarga
+
+```powershell
+# 1. Instalar GitHub CLI e iniciar sesión
 winget install GitHub.cli
 gh auth login
-gh auth setup-git
-```
+gh auth setup-git      # para que git use tu sesión y no pida contraseña
 
-`gh auth login` inicia tu sesión de GitHub. `gh auth setup-git` hace que `git` use esa sesión al subir, así no te pide usuario y contraseña.
-
-## Uso
-
-```
+# 2. Ejecutar
 python backup_notas.py
 ```
 
-1. Se abre una ventana: elegí la carpeta de tus notas.
-2. Escribí el nombre del repo.
-3. Si no existe en tu cuenta, el script pregunta si queres crearlo con ese mismo nombre. Respondé `s` para crearlo (siempre privado) o `n` para cancelar sin tocar nada.
-4. El script hace `git add`, `commit` y `push`, y al final muestra el link del repo.
-
-Podés ejecutarlo todas las veces que quieras: si no hay cambios nuevos, solo te avisa.
+**Requisitos:** Python 3.8+ (con *tcl/tk*) · [Git](https://git-scm.com/) 2.28+ · [GitHub CLI](https://cli.github.com/)
 
 ## Diagrama
 
 ```mermaid
-  flowchart TD
-      A["Elegís la carpeta de tus notas"] --> B["Escribís el nombre del repo"]
-      B --> C{"¿Existe en GitHub?"}
-      C -->|sí| E["Elegís repo existente o creás uno nuevo"]
-      C -->|no| D{"¿Querés crearlo?"}
-      D -->|no| F(["Cancelado"])
-      D -->|sí| D2["Se crea el repo privado"]
-      D2 --> E
-      E --> G["Se guardan los cambios con git: add y commit"]
-      G --> H["Se suben a GitHub: push"]
-      H --> I(["Listo: link del repo"])
+flowchart TD
+    A([Inicio]) --> B[Elegir carpeta de notas]
+    B --> C[Listar repos de tu cuenta]
+    C --> D[Elegir número o escribir nombre]
+    D --> E{¿El repo existe?}
+    E -- no --> F[Crear repo privado]
+    E -- sí --> G
+    F --> G["Preparar carpeta<br/>git init · .gitignore · origin"]
+    G --> H{¿Hay cambios?}
+    H -- sí --> I["git add + commit<br/>auto: AAAA-MM-DD HH:MM"]
+    H -- no --> J[Avisar: sin cambios]
+    I --> K["git push -u origin main"]
+    J --> K
+    K --> L([Listo])
 ```
 
-- Trabaja directo en tu carpeta de notas.
-- Crea un `.gitignore` con `.obsidian/workspace*.json` (si no existe), porque ese archivo cambia constantemente y llena el historial.
-- Cada commit se llama `auto: AAAA-MM-DD HH:MM`.
-- La rama es `main`.
-- Si la carpeta ya tenía un `origin`, lo apunta al repo que elegiste.
+### 1 · Subir notas
 
-## Problemas frecuentes
+1. Se abre una ventana: elegí la carpeta de tus notas.
+2. El script lista tus repos. Escribí el **número** de uno existente o un **nombre nuevo**.
+3. Si el nombre no existe, se crea un repo **privado** con ese nombre.
+4. Se hace `git add -A`, `commit` y `push`.
 
-| Problema | Solución |
+Podés ejecutarlo cuantas veces quieras: si no hay cambios nuevos, solo te avisa.
+
+### 2 · Traer notas
+
+Elegís un repo de la lista y se clona en la ruta seleccionada.
+
+## Qué hace
+
+| | |
 |---|---|
-| `Instalá GitHub CLI y corré 'gh auth login'` | Instalá `gh` y ejecutá `gh auth login`. |
-| El push pide credenciales o se cuelga | Ejecutá `gh auth setup-git` una vez. |
-| Error en `git commit` por `user.name` o `user.email` | `git config --global user.name "Tu Nombre"` y `git config --global user.email "tu@mail.com"` |
-| El push se rechaza | El repo ya tiene commits que tu carpeta no tiene. Elegí un repo vacío o uno nuevo. |
-| `No module named 'tkinter'` | Reinstalá Python marcando la opción *tcl/tk and IDLE*. |
-| Dice que el repo no existe, pero sí existe | Revisá `gh auth status`. |
+| **Siempre privado** | Los repos nuevos se crean con `--private`. |
+| **Trabaja en tu carpeta** | No copia nada a otro lado: inicializa git directamente en tu vault. |
+| **`.gitignore` automático** | Ignora `.obsidian/workspace*.json`, que cambia todo el tiempo. |
+| **Commits ordenados** | Cada commit se llama `auto: AAAA-MM-DD HH:MM`. |
+| **Remote automático** | Si la carpeta ya tenía `origin`, lo apunta al repo elegido. |
+
+## Problemas
+
+<details>
+<summary><b>Instalá GitHub CLI y corré 'gh auth login'</b></summary>
+
+Instalá `gh` y ejecutá `gh auth login`. Verificá con `gh auth status`.
+</details>
+
+<details>
+<summary><b>El push pide credenciales o se cuelga</b></summary>
+
+Ejecutá `gh auth setup-git` una vez.
+</details>
+
+<details>
+<summary><b>Error en <code>git commit</code> por <code>user.name</code> o <code>user.email</code></b></summary>
+
+```bash
+git config --global user.name "Tu Nombre"
+git config --global user.email "tu@mail.com"
+```
+</details>
+
+<details>
+<summary><b>El push se rechaza</b></summary>
+
+El repo ya tiene commits que tu carpeta no tiene. Elegí un repo vacío o creá uno nuevo.
+</details>
+
+<details>
+<summary><b>No module named 'tkinter'</b></summary>
+
+Reinstalá Python marcando la opción *tcl/tk and IDLE*.
+</details>
+
+<details>
+<summary><b>Dice que el repo no existe, pero sí existe</b></summary>
+
+Revisá `gh auth status`: puede que estés logueado con otra cuenta.
+</details>
 
 ## Seguridad
 
-- El repo se crea **siempre privado**.
-- Igual, no guardes contraseñas, claves ni tokens dentro de tus notas: quedarían en el historial de Git.
+- Los repos se crean **siempre privados**.
+- De todas maneras no guardes contraseñas, claves ni tokens en tus notas: quedarían en el historial de Git aunque los borres después.
 
 ## Limitaciones
 
-- Es interactivo (abre una ventana y hace preguntas), así que no sirve para el Programador de tareas de Windows. (Probablemente lo haga después)
-- Está pensado para un solo dispositivo que sube las notas.
-- Un solo repo por ejecución.
+- Es interactivo (abre una ventana y hace preguntas), así que **no sirve todavía para el Programador de tareas** de Windows.
 
 ## Estructura
-```
-backup-notas/
-├── backup_notas.py   # todo el código 
+
+```text
+vaultNoteScript/
+├── backup_notas.py   # todo el código
 └── README.md
 ```
