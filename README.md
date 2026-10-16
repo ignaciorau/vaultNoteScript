@@ -8,7 +8,7 @@
 ![Git](https://img.shields.io/badge/Git-2.28%2B-F05032?logo=git&logoColor=white)
 ![GitHub CLI](https://img.shields.io/badge/GitHub%20CLI-requerido-181717?logo=github&logoColor=white)
 
-[Descarga](#descarga) · [Diagrama](#diagrama) · [Qué hace](#qué-hace) · [Problemas](#problemas) · [Limitaciones](#limitaciones)
+[Descarga](#descarga) · [Diagrama](#diagrama) · [Problemas](#problemas) · [Limitaciones](#limitaciones)
 
 </div>
 
@@ -91,16 +91,6 @@ Podés ejecutarlo cuantas veces quieras: si no hay cambios nuevos, solo te avisa
 ### 2 · Traer notas
 
 Elegís un repo de la lista y se clona en la ruta seleccionada.
-
-## Qué hace
-
-| | |
-|---|---|
-| **Siempre privado** | Los repos nuevos se crean con `--private`. |
-| **Trabaja en tu carpeta** | No copia nada a otro lado: inicializa git directamente en tu vault. |
-| **`.gitignore` automático** | Ignora `.obsidian/workspace*.json`, que cambia todo el tiempo. |
-| **Commits ordenados** | Cada commit se llama `auto: AAAA-MM-DD HH:MM`. |
-| **Remote automático** | Si la carpeta ya tenía `origin`, lo apunta al repo elegido. |
 
 ## Problemas
 
