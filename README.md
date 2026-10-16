@@ -28,17 +28,37 @@ También puede **traer** tus notas desde un repo a otra máquina, preguntandote 
 
 ## Descarga
 
+**Requisitos:** Python 3.8+ con *tkinter* · [Git](https://git-scm.com/) 2.28+ · [GitHub CLI](https://cli.github.com/)
+
+### Windows
+
 ```powershell
-# 1. Instalar GitHub CLI e iniciar sesión
 winget install GitHub.cli
 gh auth login
 gh auth setup-git      # para que git use tu sesión y no pida contraseña
 
-# 2. Ejecutar
 python backup_notas.py
 ```
 
-**Requisitos:** Python 3.8+ (con *tcl/tk*) · [Git](https://git-scm.com/) 2.28+ · [GitHub CLI](https://cli.github.com/)
+### Linux
+
+```bash
+# Debian / Ubuntu
+sudo apt install git gh python3-tk
+
+# Fedora
+sudo dnf install git gh python3-tkinter
+
+# Arch
+sudo pacman -S git github-cli tk
+
+gh auth login
+gh auth setup-git  
+
+python3 backup_notas.py
+```
+
+> Necesita entorno gráfico: la selección de carpeta abre una ventana, así que no funciona sin display.
 
 ## Diagrama
 
