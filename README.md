@@ -36,16 +36,17 @@ Podés ejecutarlo todas las veces que quieras: si no hay cambios nuevos, solo te
 ## Diagrama
 
 ```mermaid
-flowchart TD
-    A["Elegís la carpeta de tus notas"] --> B["Escribís el nombre del repo"]
-    B --> C{"¿Existe en GitHub?"}
-    C -->|sí| E
-    C -->|no| D{"¿Querés crearlo?"}
-    D -->|no| F(["Cancelado"])
-    D -->|sí| D2["Se crea el repo privado"]
-    D2 --> E["Se guardan los cambios con git: add y commit"]
-    E --> G["Se suben a GitHub: push"]
-    G --> H(["Listo: link del repo"])
+  flowchart TD
+      A["Elegís la carpeta de tus notas"] --> B["Escribís el nombre del repo"]
+      B --> C{"¿Existe en GitHub?"}
+      C -->|sí| E["Elegís repo existente o creás uno nuevo"]
+      C -->|no| D{"¿Querés crearlo?"}
+      D -->|no| F(["Cancelado"])
+      D -->|sí| D2["Se crea el repo privado"]
+      D2 --> E
+      E --> G["Se guardan los cambios con git: add y commit"]
+      G --> H["Se suben a GitHub: push"]
+      H --> I(["Listo: link del repo"])
 ```
 
 - Trabaja directo en tu carpeta de notas.
