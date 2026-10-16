@@ -8,7 +8,7 @@
 ![Git](https://img.shields.io/badge/Git-2.28%2B-F05032?logo=git&logoColor=white)
 ![GitHub CLI](https://img.shields.io/badge/GitHub%20CLI-requerido-181717?logo=github&logoColor=white)
 
-[Descarga](#-descarga) · [Diagrama](#-diagrama) · [Qué hace](#-qué-hace) · [Problemas frecuentes](#-problemas-frecuentes) · [Limitaciones](#-limitaciones)
+[Descarga](#descarga) · [Diagrama](#diagrama) · [Qué hace](#qué-hace) · [Problemas](#problemas) · [Limitaciones](#limitaciones)
 
 </div>
 
